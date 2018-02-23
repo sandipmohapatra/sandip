@@ -1,0 +1,226 @@
+Spring MVC :-
+-------------------------
+Model View and controller
+----------------
+view :- html/jsp
+controller :- .java (support presentation part to model part)
+model:- having service+bussiness+DAO (all will be pojo classes)
+-----------------------------------------------------------------------
+controller :-
+here the controller is known as the front controller.
+it supports multiple views at a time.
+it is also known as multiaction controller.
+form validation can be done by the controller
+---------------------------------------------
+support single view (servlet/jsp) :- 
+example :-
+<html>
+<form action="employee" method=post>
+<form action="employee.jsp" method=post>
+------------------------------------------
+To handle multiple views by single controller we use viewResolvers.
+-----------------------------------------------------
+From the view the request goes to the DispatcherServlet from there it goes to HandlerMapping  
+1)view -->DispatcherServlet (configure) --->HandlerMapping
+3)controller -->ModelAndView
+4)DispatcherServlet -->ViewResolver(multiple views)
+5)DispatcherServlet -->output view
+---------------------------------------------------------
+1)view :-
+<a href="employee.html">Employee</a>
+--------------------------------------------------------
+2)controller:-
+@Controller  <--- this is to mark the class as the controller
+public class HelloController
+{
+@RequestMapping("/employee")
+public ModelAndView helloWorld()
+{
+String message="This is my first MVC program";
+return new ModelAndView("result","message",message);
+}
+
+
+}
+---------------------------------------------------------------------
+3)Configure DispatcherServlet
+web.xml
+--------------
+<web-app>
+<servlet>
+<servlet-name>spring</servlet-name>
+<servlet-class>org.springfarmework.web.servlet.DispatcherServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>spring</servlet-name>
+<url-pattern>*.html</url-pattern>
+</servlet-mapping>
+</web-app>
+-------------------------------------------------------------------------------------
+4)viewResolvers for giving the output :-
+---------------------------------------------------------------------
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="prefix" value="/WEB-INF/views/"/>
+<property name="suffix" value=".jsp"/>
+</bean>
+----------------------------------------------
+5)result.jsp (which will be created under WEB-INF/views/result.jsp)
+-------------------
+Message is :${message}
+-------------------------------------------------------------------------------------------------------------------- 
+All the incoming request is intercepted by the DispatcherServlet.(request---->DispatcherServlet)
+This works as a front controller.
+The DispatcherServlet get entry of HandleMapping from the web.xml file and forwards the request to the controller.
+The controller returns an object of ModelAndView .
+The DispatcherServlet checks the entry of view resolver in the spring.xml and invokes the specified view component.
+---------------------------------------------------------------------------------------------------------------
+example 2:-
+-------------------
+index.jsp
+-------------------
+<a href="hello.html">First click</a>
+<a href="welcome.html">Second click</a>
+
+controller1.java
+---------------------------
+1)controller:-
+@Controller  <--- this is to mark the class as the controller
+public class HelloController
+{
+@RequestMapping("/hello")  <---Handler Mapping
+public ModelAndView helloWorld()
+{
+String message="This is my first MVC program";
+return new ModelAndView("result","message",message);
+}
+}
+----------------------------------------------------------------------
+controller1.java
+---------------------------
+2)controller:-
+@Controller  <--- this is to mark the class as the controller
+public class HelloController
+{
+@RequestMapping("/welcome")
+public ModelAndView helloWorld()
+{
+String message="Welcome to Spring MVC program";
+return new ModelAndView("welcome","message",message);
+}
+}
+----------------------------------------------------------------------
+o/p:-
+result.jsp
+----------------
+Message is:${message}
+--------------------------------------------------
+welcome.jsp
+--------------------
+Message is:${message}
+
+
+
+
+
+
+
+
+----------------------------SpringMVC Project--------------------------------------------------------------------- 
+index.jsp
+--------------
+<a href="empform">Add Employee</a>
+<a href="viewform">View Employee</a>
+---------------------------------------------------------------------------
+emp.java(POJO)
+----------------
+public void Emp
+{
+private int id,salary;
+private String name,design;
+constructor()
+constructor(parameterized...);
+getter()
+setter()
+--------------------------------------------------
+empcontroller.java
+--------------------------------------------------
+*DispatcherServlet class is responsible to mange the flow of spring MVC controller.
+
+@Controller
+public class empcontroller
+{
+@RequestMapping("/empform")
+public ModelAndView showform()
+{
+return new ModelAndView("empform","command",new Emp());
+}
+
+@RequestMapping("/save",method=RequestMethod.POST)
+public ModelAndView showform()
+{
+s.o.p(emp.getName()+emp.getId()+emp.getSalary()+emp.getDesign());
+return new ModelAndView("redirect:/viewemp");
+}
+
+@RequestMapping("/viewemp")
+public ModelAndView viewemp()
+{
+List<Emp> list=new ArrayList<Emp>();
+list.add(new Emp(1,"Rahul","70000","s/w eng"));
+list.add(new Emp(2,"Meka","80000","s/w eng"));
+list.add(new Emp(3,"Tarun","90000","s/w eng"));
+return new ModelAndView("viewemp","list",list);
+}
+------------------------------------------------------
+empform.jsp
+--------------------
+<form action="save" method="post">
+id<input type=text>
+name<input type=text>
+salary<input type=text>
+design<input type=text>
+<submit>
+</form>
+------------------------------------------------
+viewemp.jsp
+---------------------
+<table>
+for()
+{
+${emp.id}
+${emp.name}
+${emp.salary}
+${emp.design}
+}
+</table>
+------------------------------------------------
+viewResolver
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="prefix" value="/WEB-INF/views/"/>
+<property name="suffix" value=".jsp"/>
+</bean>
+------------------------------------------------------
+web.xml
+--------------
+<web-app>
+<servlet>
+<servlet-name>spring</servlet-name>
+<servlet-class>org.springfarmework.web.servlet.DispatcherServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>spring</servlet-name>
+<url-pattern>*.html</url-pattern>
+</servlet-mapping>
+</web-app>
+-----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
