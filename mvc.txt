@@ -1,3 +1,5 @@
+https://github.com/sandipmohapatra/sandip
+
 Spring MVC :-
 -------------------------
 Model View and controller
@@ -212,7 +214,162 @@ web.xml
 <url-pattern>*.html</url-pattern>
 </servlet-mapping>
 </web-app>
------------------------------------------------------------
+--------------------------------------------------------------------------------
+Spring MVC CRUD example(create,read,update,delete)
+--------------------------------------------------------------------------------
+create table:-(oracle)
+create table employee(id number,name varchar2(30),salary number,designation varchar2(30));
+------------------------------------------------------------------------------------
+index.jsp
+----------------
+<a href="empform">Add Employee</a>
+<a href="viewemp">View Employees</a>
+----------------------------------------------------------------
+emp.java
+-------------------
+class emp
+{
+int id,salary;
+String name,design;
+getter();
+setter();
+------------------------------------------------
+Empdao.java
+-----------------------
+public class Empdao
+{
+JdbcTemplate temp;
+
+public void setTemplate(JdbcTemplate temp)
+{
+this.temp=temp;
+}
+
+public int save(Emp e)
+{
+String sql="insert into employee values("e.getId()"+" 'e.getName()' "+" 'e.getDesign' "+"e.salary");
+return temp.update(sql);
+}
+
+public int update()
+{}
+
+public int delete()
+{}
+
+public emp getEmpById(int id)
+{}
+
+}
+-----------------------------------------------------
+empform.jsp
+--------------------
+<form action="save" method="post">
+id<input type=text>
+name<input type=text>
+salary<input type=text>
+design<input type=text>
+<submit>
+</form>
+--------------------------------------------
+web.xml
+--------------
+<web-app>
+<servlet>
+<servlet-name>spring</servlet-name>
+<servlet-class>org.springfarmework.web.servlet.DispatcherServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>spring</servlet-name>
+<url-pattern>*.html</url-pattern>
+</servlet-mapping>
+</web-app>
+--------------------------------------------------------------
+spring.xml
+-------------------------
+<beam id="ds" class="org.springframework.jdbc.datasource.DriverManagerDatasource">
+<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+<property name="url" value="jdbc:oracle:thin:@locahost:1521:xe"></property>
+<property name="username" value="system"></property>
+<property name="password" value="1234"></property>
+</bean>
+
+<bean id="jt" class="org.springframe.jdbc.core.JdbcTemplate">
+<property name="datasource" ref="ds"/>
+</bean>
+
+
+<bean id="dao" class="com.sandip.dao.Empdao">
+<property name="temp" ref="jt"/>
+</bean>
+
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="prefix" value="/WEB-INF/views/"/>
+<property name="suffix" value=".jsp"/>
+</bean>
+-------------------------
+empeditform.jsp
+------------------------------
+<form action="edit" method="post">
+id<input type=text>
+name<input type=text>
+salary<input type=text>
+design<input type=text>
+<submit>
+</form>
+---------------------------------------
+viewemp.jsp
+---------------------
+<table>
+for()
+{
+${emp.id}
+${emp.name}
+${emp.salary}
+${emp.design}
+}
+</table>
+--------------------------------------------
+controller.java
+---------------------
+@Controller
+public class controller
+{
+@Autowired
+Empdao dao;
+@Requestmapping("/empform");
+public ModelAndView showform()
+{
+return new ModelAndView("empform","command",new Emp());
+}
+
+@RequestMapping("/save",method=RequestMethod.POST)
+public ModelAndView showform()
+{
+s.o.p(emp.getName()+emp.getId()+emp.getSalary()+emp.getDesign());
+return new ModelAndView("redirect:/viewemp");
+}
+
+@RequestMapping("/viewemp")
+public ModelAndView viewemp()
+{
+list<emp>=dao.getEmployees()
+return new ModelAndView("viewemp","list",list);
+}
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
