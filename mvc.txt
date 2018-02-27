@@ -247,19 +247,39 @@ this.temp=temp;
 
 public int save(Emp e)
 {
-String sql="insert into employee values("e.getId()"+" 'e.getName()' "+" 'e.getDesign' "+"e.salary");
+String sql="insert into employee values("e.getId()"+" 'e.getName()' "+" 'e.getDesign()' "+"e.salary()");
 return temp.update(sql);
 }
 
-public int update()
-{}
+public int update(Emp e)
+{
+String sql="update employee set name=' "+e.getName()" '+salary="+e.getSalary()+",design=' "+e.getDesign()+ " ' where id="+e.getId()+" "; 
+return temp.update(sql);
+}
 
-public int delete()
-{}
+public int delete(int id)
+{
+String sql="delete from employee where id="+id" ";
+return temp.update(sql);
+}
 
 public emp getEmpById(int id)
-{}
+{
+String sql="select * from employee where id=? ";
+return temp.queryForObject(sql,RowMapper<Emp> (Emp.class));
+}
 
+public List<Emp> getEmployees()
+{
+return temp.query("select * from employee",new RowMapper<emp>()
+{
+public emp mapRow(ResultSet rs,int row)throws SQLException
+{
+emp e=new emp();
+e.setId(rs.getInt(1));
+e.setName(rs.getString(2));
+e.setSalary(rs.getInt(3));
+e.setDesign(rs.getString(4));
 }
 -----------------------------------------------------
 empform.jsp
@@ -327,6 +347,8 @@ ${emp.id}
 ${emp.name}
 ${emp.salary}
 ${emp.design}
+<a href="editemp/${emp.id}">Edit</a>
+<a href="deleteemp/${emp.id}">Delete</a>
 }
 </table>
 --------------------------------------------
@@ -338,6 +360,7 @@ public class controller
 @Autowired
 Empdao dao;
 @Requestmapping("/empform");
+<!-- open the add employee form --->
 public ModelAndView showform()
 {
 return new ModelAndView("empform","command",new Emp());
@@ -357,6 +380,26 @@ list<emp>=dao.getEmployees()
 return new ModelAndView("viewemp","list",list);
 }
 
+@RequestMapping("/editemp/{id}")
+public ModelAndView edit(int id)
+{
+Emp emp=dao.getEmpById(id);
+return new ModelAndView("empeditform","command",emp);
+}
+
+@RequestMapping("/edit",method=RequestMethod.Post)
+public ModelAndView editsave(Emp emp)
+{
+dao.update(emp)
+return new ModelAndView("redirect:/viewemp");
+}
+
+@RequestMapping("/deleteemp/{id}",method=RequestMethod.Post)
+public ModelAndView delete(int id)
+{
+dao.delete(id)
+return new ModelAndView("redirect:/viewemp");
+}
 -----------------------------------------------------------------------------
 
 

@@ -1,0 +1,965 @@
+Spring framework
+-----------------------
+1)Spring framework was developed by Rod Johnson 2003.
+
+2)it makes easy to develop JavaEE application
+
+3)it is light weight framework.
+ex:-
+i) awt is heavy weight as it depends on O/S. but swing is light weight as it depends on JDK.
+ii)EJB is heavy weight as it depends on application server. but spring is light weight as it depends on spring jars and jdk.
+
+4)it is framework of frameworks as it provides support to various frameworks such as :- 
+i)struts ii)Hibernate iii)EJB iv)JSF
+
+5)It has several modules such as IOC,AOP,DAO,ORM,WEB MVC.
+
+6)spring framework is build on 2 priciples
+i)Runtime Polymorphism 2)Has-A relationship
+* spring says instead of inheritance use HAS-A relationship
+
+polymorphism :- runtime(function overriding),compile time(function overloading)
+
+ 
+7)It has many predefined Templates
+example :- 
+JdbcTemplate :- it handles the exception handing,creating connetion,creating statement,committing transaction,closing connetion etc. it saves lot of time.
+
+8)Loose coupling
+
+9)easy to test
+
+10)fast development 
+-------------------------------------------------------------------------------
+Sping IOC:- 
+------------------------
+in spring we have 3 containers :-
+1)core-interface (BeanFactory) which implements a class (XMLBeanFactory)
+2)J2EE-interface (ApplicationContext) which implements a class (ClassPathXmlApplicationContext)
+3)MVC-interface (WebApplicationContext) which implements a class (WebApplicationContextUtil)
+
+-----------------------------------------------------
+IOC :- Dependency Injection(values will be inserted ) there are 2 ways we can insert the value
+i)setter Injection(setter methods)
+ii)constructor Injection (parameterized constructor) 
+----------------------------------------------------
+
+to write a spring program we have to write 3 prgs
+1)pojo class (plain old java object)
+2)xml file
+3)driver class (main method class,container) 
+ 
+
+work of a container:-
+------------------------------------ 
+1)read the web.xml
+2)create Instances
+3)manage life cycle methods.
+--------------------------------------------------------
+example 1
+----------------------
+1)pojo class
+Test.java
+----------------------
+class Test
+{
+void hello()
+{
+SOP("hello world");
+}
+}
+--------------------------------------------
+2)spring.xml
+<dtd/xsd>
+<beans>
+<bean class="Test" id="ob">  <--object of test class
+</bean>
+</beans>
+------------------------------------------------
+3)client.java
+
+class client
+{
+public static void main(String args[])
+{
+Resource r=new classpathResource("spring.xml");//read the .xml file 
+BeanFactory fact=new XmlBeanFactory(r);
+Test t=(Test)fact.getBean("ob");
+t.hello();
+}
+}
+-------------------------------------------------------------------------
+setter injection
+-------------------------------
+1)pojo class
+Test.java
+----------------------
+class Test
+{
+private String name;
+public void setName(String name)
+{
+this.name=name;
+}
+void hello()
+{
+SOP("hello :"+name");
+}
+}
+-------------------------------------------------------
+2)spring.xml
+<dtd/xsd>
+<beans>
+<bean class="Test" id="ob">  <--object of test class
+<property name="name" value="meka"/>
+or
+<property name="name">
+<value>meka</value>
+</bean>
+</beans>
+-----------------------------------------------------------
+3)client.java
+
+class client
+{
+public static void main(String args[])
+{
+Resource r=new classpathResource("spring.xml");//read the .xml file 
+BeanFactory fact=new XmlBeanFactory(r);
+Test t=(Test)fact.getBean("ob");
+t.hello();
+}
+}
+-----------------------------------------------------------
+constructor-injection
+----------------------------------------------
+pojo class
+Test.java
+--------------
+class Test
+{
+private String name;
+int age;
+Test(String name)
+{
+this.name=name;
+}
+Test(int age)
+{
+this.age=age;
+}
+Test(String name,int age)
+{
+this.name=name;
+this.age=age;
+}
+public void display()
+{
+sop("the name is "+name+" and age is "+age);
+}
+}
+------------------------------------------------------------------------
+spring.xml
+--------------------
+<beans>
+<bean id="ob" class="Test">
+<constructor-arg value="22" type="int">
+<constructor-arg value="Vinit" type="String">
+</constructor-arg>
+</bean>
+</beans>
+---------------------------------------------------------------------------
+
+example :- setter Injection (List/Set/Map)
+----------------------------------------------------------------------------
+Test.java
+----------------
+class Test
+{
+List fruits;
+Set Cricketers;
+Map Countrycap;
+getter/setter
+}
+-------------------------------------
+spring.xml
+----------------------
+<beans>
+<bean class="Test" id="ob">
+<property name="fruits">
+<list>
+<value>apple</value>
+<value>orange</value>
+<value>grapes</value>
+</list>
+</property>
+
+<property name="Cricketers">
+<set>
+<value>Amit</value>
+<value>Rahul</value>
+<value>Sunil</value>
+</set>
+</property>
+
+<property name="Countrycap">
+<Map>
+<entry key="India" value="Delhi">
+<entry key="Pak" value="XYZ">
+<entry key="Japan" value="PQR">
+</Map>
+</property>
+</bean>
+</beans>
+
+---------------------------------------
+setter-injection with ref
+----------------------------------------
+example :- employee and address (Has-A).employee has a address.
+---------------------------------------------------------------
+you have to pass the ref of address to employee
+----------------------------------------------------------------
+example :- car and engine (Has-A) .car has a engine
+your have to pass the ref of engine to car
+---------------------------------------------------------------------
+class Car
+{
+private String carname,cartype;
+private Engine engine; <- class Engine
+  //setter
+public void display()
+{
+sop("the car name is "+carname+" the car type is "+cartype);
+sop("the model name is "+engine.getModelname());
+sop("the model no is "+engine.getModelno());
+}
+}
+--------------------------------------------------------------------------------------
+class Engine
+{
+private String modelname,modelno;
+//setter
+//getter
+}
+---------------------------------------------------------------------------------------------
+engine.xml
+--------------------
+<beans>
+<bean id="eng" class="Engine">
+<property name="modelname" value="2017"/>
+<property name="modelno" value="12"/>
+</beans>
+-------------------------------------------------------------
+car.xml
+-------------------
+<beans>
+<bean id="c" class="Car">
+<property name="carname" value="Audi"/>
+<property name="cartype" value="Luxury"/>
+<property name="Engine" ref="eng"/>
+</beans>
+
+------------------------------------------------------------------------------
+inheritance(parent -child)class  (parent class as employee and child class as address)
+------------------------
+Address.java
+---------------------
+public class Address
+{
+private String city,state,country;
+public Address(String city,String state,String country)
+{}
+
+public String toString()  <----object is converted to string  
+{
+return city+"  "+state+"  "+country;
+}
+---------------------------------------------------
+Employee :- 
+public class Employee
+{
+private int id;
+String name;
+private Address address;
+public Employee(int id,String name,Address address)
+{
+this.id=id;
+}
+void show()
+{
+sop(print id,name,address);
+}
+-----------------------------------------------------------
+spring.xml
+--------------------
+<beans>
+
+<bean id="x" class="Employee">
+<constructor-arg value="101"/>
+<constructor-arg value="vinit"/>
+</bean>
+
+<bean id="y" class="Address">
+<constructor-arg value="bang"/>
+<constructor-arg value="karnataka"/>
+<constructor-arg value="India"/>
+</bean>
+
+<bean id="z" class="Employee" parent="x">
+<constructor-arg ref="y"/>
+</bean>
+</beans>
+------------------------------------------------------------------
+main.java
+-------------------
+Employee emp=(Employee)fact.getBean("z");
+emp.show();
+
+-----------------------------------------------------------
+list :-
+---------------
+import java.util.*;
+public class Question
+{
+private int id;
+private String name,question;
+private List<String> answers;
+//setter();
+public void display()
+{
+s.o.p(id+" "+name);
+Iterator<String> itr=answers.iterator();
+while(itr.hasNext())
+{
+s.o.p(itr.next());
+}
+}
+}
+----------------------------------------------
+spring.xml
+--------------------
+<beans>
+<bean id="que" class="Question">
+<property name="id" value="1"/>
+<property name="name" value="meka"/>
+<property name="question" value="What is java ?"/>
+<property name="answers">
+<list>
+<value>Java is is prg lang</value>
+<value>Java is is lang</value>
+<value>Java is  lang</value>
+</list>
+</property>
+</bean>
+</beans>
+--------------------------------
+Question q=(Question)fact.getBean("que");
+q.display();
+-------------------------------------------------------
+multiple question and multiple answers 
+------------------------------------------------------
+Answer.java
+------------------------
+class Answer
+{
+private int id;
+private String name;
+//setter();
+public String toString()
+{
+return id+"  "+name;
+}}
+----------------------------------------------
+Question.java
+--------------------------------
+class Question
+{
+private int id;
+private String name;
+private List<Answer> answers;
+//setter()
+public void display()
+{
+s.o.p(id+"  "+name);
+Iterator<Answer> itr=answers.iterator();
+while(itr.hasNext())
+{
+s.o.p(itr.next())
+}
+}}
+---------------------------------------------------------
+spring.xml
+------------------------
+<beans>
+<bean id="ans1" class="Answer">
+<property name="id" value="1"/>
+<property name="name" value="java is a lang"/>
+</bean>
+
+<bean id="ans2" class="Answer">
+<property name="id" value="2"/>
+<property name="name" value="java is a prg  lang"/>
+</bean>
+
+<bean id="ans3" class="Answer">
+<property name="id" value="3"/>
+<property name="name" value="java is oops"/>
+</bean>
+
+<bean id="que1" class="Question">
+<property name="id" value="1"/>
+<property name="name" value="what is java ?"/>
+<property name="answers">
+<list>
+<ref bean="ans1"/>
+<ref bean="ans2"/>
+<ref bean="ans3"/>
+</list>
+</property>
+</bean>
+</beans>
+-------------------------------------------------------
+main.java
+-----------------
+Question q=(Question)fact.getBean("que1");
+q.display();
+-------------------------------------------------------
+Map (multiple question and Answers) 
+----------------------------------------------------------
+Answer.java
+---------------------
+class Answer
+{
+private id;
+private String name;
+private Date posted;
+public Answer(int id,String name,Date posted)
+{
+this.id=id;
+this.name=name;
+this.posted=posted;
+}
+
+public String toString()
+{
+return id+" "+name+"  "+posted;
+}
+}
+--------------------------------------------------------------------------
+class Question
+{
+private int id;
+private String Qname;
+private Map<Answer,User> answers;
+
+public Question(int id,String Qname,Map<Answer,User> answers)
+{
+ this.is=id;
+this.Qname=Qname;
+this.answers=answers;
+}
+
+public void display()
+{
+s.o.p(id+"  "+name);
+s.o.p("the answer are");
+
+Set<Entry<Answer,User>> set=answers.entrySet();
+
+Iterator<Entry<Answer,User>> itr=set.iterator();
+
+while(itr.hasNext())
+{
+Entry<Answer,User> entry=itr.next();
+Answer ans=entry.getKey();
+User user=entry.getValue();
+
+s.op("answer Information");
+s.op(ans);
+sop("posted by");
+s.op(user);
+}
+}}
+-----------------------------------------------------------
+User.java
+-----------------------
+class User
+{
+id,name,email;
+public User(int id,String name,String email)
+{
+this.id=id;
+----
+}
+
+public String toString()
+{
+return id+"  "+name+"  "+email;
+}
+}
+----------------------------------------------------------
+spring.xml
+-------------------------------------
+<beans>
+
+<bean id="ans1" class="Answer">
+<constructor-arg value="1"/>
+<constructor-arg value="java is prg lang"/>
+<constructor-arg value="9/2/18"/>
+</bean>
+
+<bean id="ans2" class="Answer">
+<constructor-arg value="2"/>
+<constructor-arg value="java is high level lang"/>
+<constructor-arg value="9/2/18"/>
+</bean>
+
+<bean id="ans3" class="Answer">
+<constructor-arg value="3"/>
+<constructor-arg value="java is oops"/>
+<constructor-arg value="9/2/18"/>
+</bean>
+
+<bean id="user1" class="User">
+<constructor-arg value="1"/>
+<constructor-arg value="Vinit"/>
+<constructor-arg value="vinit@gmail.com"/>
+</bean>
+
+<bean id="user2" class="User">
+<constructor-arg value="2"/>
+<constructor-arg value="Rahul"/>
+<constructor-arg value="rahul@gmail.com"/>
+</bean>
+
+<bean id="user3" class="User">
+<constructor-arg value="3"/>
+<constructor-arg value="meka"/>
+<constructor-arg value="meka@gmail.com"/>
+</bean>
+
+<bean id="q" class="Question">
+<constructor-arg value="1"/>
+<constructor-arg value="What is java"/>
+<map>
+<entry key-ref="ans1" value-ref="user1"></entry>
+<entry key-ref="ans2" value-ref="user2"></entry>
+<entry key-ref="ans3" value-ref="user3"></entry>
+</map>
+</contructor-arg>
+</bean>
+</beans>
+-------------------------------------------------------------------
+Question ques=(Question)fact.getBean("q");
+ques.display();
+-------------------------------------------------------------------
+Spring JDBC
+---------------------------------------------------------------
+Difference between JDBC and Spring JDBC
+---------------------------------------------------------------
+JBDC
+1)The will be compilation error so exception handling has to be done.
+2)It gives SQL exception as it is inside the java.sql package.
+3)closing of connection is required(con.close());
+4)select querry operation will always return ResultSet.
+--------------------------------------------------------------------------------
+spring jdbc
+1)it gives runtime exception so we neednot to handle it.
+2)it gives DataAccess exception .it is inside spring DAO.jar
+3)closing of connection is not required.
+4)generic select method for all type of select operation.
+------------------------------------------------------------------------------------------------- 
+*spring frame work provides with some templates for database access.
+-------------------------------------------------------------------------------------------------------
+1)JdbcTemplate :- it is used to creating and releasing of resources.(closing of connection)
+2)NamedParameterJdbcTemplate
+3)SimpleJdbcTemplate
+4)SimpleJdbcInsert
+5)SimpleJdbcCall
+-------------------------------------------------------
+DataSource is a interface.
+It is implemented by 2 class 1)DriverManagerDataSource 2)BasicDataSource
+--------------------------------------------------------------
+It internally uses JDBC api but eliminates a lot of problems of JDBC api.
+-----------------------------------------------------------------------------------------------------------
+JdbcTemplate methods()
+----------------------------------------
+1)public int update(String query) :- it is used to insert,update,delete records.
+2)public void execute(String query):- it is used to exceute DDL query
+3)public T query(String sql,ResultSetExtractor rs):- it is use to fetch records from Database.
+4)public List query(String sql,RowMapper rm):- it is use to fetch records.
+----------------------------------------------------------------------------------------------------
+example using SpringJdbc Template
+---------------------------------------------------------------
+1)oracle10xe:-
+create table employee
+(id number,name varchar2(30),salary number);
+-----------------------------------------------------------------------------
+2)employee.class (pojo)
+public class Employee
+{
+private int id;
+private String name;
+private float salary;
+//getter and setter ()
+-----------------------------------------------------------
+3)employeeDao.class
+
+public class employeeDao
+{
+private JdbcTemplate jt;
+public void setJdbcTemplate(JdbcTemplate jt)
+{
+this.jt=jt;
+}
+
+public int saveEmployee(Employee e)
+{
+String query="insert into employee values(' "+e.getId()+" ',' "+e.getName()+" ',' "+e.getsalary()+" ')";
+return jt.update(query);
+}
+
+public int updateEmployee(Employee e)
+{
+String query="update employee set name=' "+e.getName()+" ',salary=' "+e.getsalary()+" ' where id=' "e.getId()+" ';
+return jt.update(query);
+}
+
+public int deleteEmployee(Employee e)
+{
+String query="delete from employee where id=' "e.getId()+" ';
+return jt.update(query);
+}
+
+}
+-------------------------------------------------------
+spring.xml
+--------------------
+<beans>
+<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<property name="driverClassName" value="oracle.jdbc.driver.oracleDriver"/>
+<property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+<property name="username" value="system"/>
+<property name="password" value="1234"/>
+</bean>
+
+<bean id="jtemp" class="org.springframework.jdbc.core.JdbcTemplate">
+<property name="dataSource" ref="ds"/>
+</bean>
+
+<bean id="dao" class="EmployeeDao">
+<property name="jdbcTemplate" ref="jtemp"/>
+</bean>
+
+1)DriverManagerDataSource :- it is used to contain information about the database such as driver class name,connection url,username,password.
+2)There is a property called datasource .we need to pass the reference of DriverManagerDataSource to it.
+3)we have to pass the ref of JdbcTemplate to EmployeeDao class .We are passing with the help of setter().
+---------------------------------------------------------------------
+test.java
+--------------------------------
+main()
+{
+ApplicationContext ctx=new ClassPathXmlApplicationContext("spring.xml");
+
+EmployeeDao d=(EmployeeDao)ctx.getBean("dao");
+int s=d.saveEmployee(new Employee(101,"vinit",56000));
+sop(s);
+
+int s1=d.updateEmployee(new Employee(101,"vinit",76000));
+sop(s1);
+
+int s2=d.deleteEmployee(new Employee(101));
+sop(s2);
+}
+}
+---------------------------------
+PreparedStatement :- we can enter dynamic entry by using the preparedStatement.
+we have pass parameter into the execute().
+
+to use the parameterized query we pass the instance of PreparedStatementCallback in the execute ().
+
+PreparedStatementCallback it is a interface.It has only one abstract method
+
+public T execute(String sql,PreparedStatementCallback<T>)
+{
+@Override
+public T doInPreparedStatement(PreparedSatatement ps)throws SQLException,DataAccessException 
+}
+
+
+syntax:-
+public Boolean saveEmployee(Employee e)
+{
+String q="insert into employee values(?,?,?)";
+return jt.execute(q,new PreparedStatementCallback<Boolean>()
+{
+@Override
+public Boolean doInPreparedStatement(PreparedSatatement ps)throws SQLException,DataAccessException 
+{
+ps.setInt(1,e.getInt());
+ps.setString(2,e.getString());
+ps.setString(3,e.getString());
+return ps.execute();
+}
+});
+--------------------------------------------------------------
+ResultSetExtractor Interface
+-------------------------------------------------------------------------------------------------------------------
+1)it is use to fetch the data from the database.
+
+-----------------------
+As it is a interface it has one abstract method in it.
+1)extractData accepts a ResultSet and return the list.
+
+public T extractData(ResultSet rs)throws SQLException,DataAccessException
+-------------------------------------------------------------------------------------------------------
+
+syntax:-
+--------------
+public List<Employee> getAllEmployees()
+{
+return t.query("select * from employee",new ResultSetExtractor<List<Employee>>()
+{
+@Override
+public List<Employee> extractData(ResultSet rs)throws SQLException,DataAccessException
+{
+List<Employee> list=new ArrayList<Employee>();
+while(rs.next())
+{
+Employee e=new Employee();
+e.setId(rs.getInt(1));
+e.setName(rs.getName(2));
+e.setSalary(rs.getSalary(3));
+list.add(e);
+}
+return list;
+}
+});
+-------------------------------------------
+RowMapper :-It is also used to fetch records from the database .It is a interface. 
+
+syntax:-
+
+public T query(String sql,RowMapper<T> rm)
+
+------------------------------
+The method inside the RowMapper is mapRow .it accepts Resultset instance and int as the parameter.
+
+public T mapRow(ResultSet rs,int rowNumber)throws SQLException
+----------------------------------------------------------------------------------------
+public List<Employee> getAllEmployees()
+{
+return t.query("select * from employee",new RowMapper<Employee>()
+{
+@Override
+public Employee mapRow(ResultSet rs,int rownumber)throws SQLException
+{
+Employee e=new Employee();
+e.setId(rs.getInt(1));
+e.setName(rs.getName(2));
+e.setSalary(rs.getSalary(3));
+}
+return e;
+}
+});
+--------------------------------------------------------------------------------
+we have done injection in 2 ways 1)setter 2)constructor
+--------------------------------------------------------------------------------
+setter :- property
+constructor :- constructor-arg
+--------------------------------------------------------
+Autowiring :-
+---------------------
+1)it enables you to inject the object dependency implicitly.(object of address is injected to employee class)  
+2)it internally uses setter or constructor injection.
+3)It is used for only ref type.
+4)it cannot be used for primative datatype or String value.
+-----------------------------------------------------------
+*adv:- code will be less
+------------------------------------------------------------
+disadv:- no control of programmer.
+-------------------------------------------------------------
+Autowiring Modes:-
+-------------------------------
+1)no :- it is the default autowiring mode.This means there will be no autowiring.
+
+example:-
+
+<bean id="a" class="A" autowire="no">
+
+2)byName:- In this the object dependency according to name of the bean.In this the property name and bean name must be same.It internally calls the setter method.
+
+example:-
+
+<bean id="a" class="A" autowire="byName">
+
+3)byType:-it will inject the object dependency according to type.
+so here the property name and the bean name can be different.It internally calls the setter method.
+
+example:-
+
+<bean id="obj" class="A" autowire="byType">
+
+4)constructor:- this mode is called be the constructor of the class.It will call the constructor having large number of parameters.
+
+example:-
+
+<bean id="obj" class="First" autowire="constructor">
+*First class should have constructor.
+-----------------------------------------------------------------------------------------------------
+example:-
+-----------------
+First.java
+----------------
+public class First
+{
+First()
+{
+sop("this is class First const");
+}
+void print()
+{
+sop("this is class First print");
+}}
+-----------------------------------------------------------
+Second.java
+----------------
+public class Second
+{
+First obj;
+
+public First getObj()
+{
+return obj;
+}
+ 
+public First setObj()
+{
+this.obj=obj;
+}
+
+
+Second()
+{
+sop("this is class Second const");
+}
+void print()
+{
+sop("this is class second print");
+}
+void display()
+{
+print();
+obj.print();
+}
+}
+-----------------------------------------------------------
+spring.xml
+---------------------
+<beans>
+<bean id="first" class="First"></bean>
+<bean id="second" class="Second" autowire="byName"></bean>
+<!----------------------------<property name="First" ref="first"/>--------------------------------->
+</beans>
+-------------------------------------------------------------------
+spring.xml
+---------------------
+<beans>
+<bean id="ob1" class="First"></bean>
+<bean id="ob2" class="Second" autowire="byType"></bean>
+<!----------------------------<property name="First" ref="ob1"/>--------------------------------->
+</beans>
+-------------------------------------------------------------------
+spring.xml
+---------------------
+<beans>
+<bean id="ob1" class="First"></bean>
+<bean id="ob2" class="Second" autowire="constructor"></bean>
+<!----------------------------<property name="First" ref="ob1"/>--------------------------------->
+</beans>
+-------------------------------------------------------------------
+spring.xml
+---------------------
+<beans>
+<bean id="ob1" class="First"></bean>
+<bean id="ob2" class="Second" autowire="no"></bean>
+</beans>
+*dependency doesnot get injected by autowiring
+-------------------------------------------------------------------
+main.java
+---------------------------------
+
+Second x=con.getBean("second",Second.class);
+x.display();
+}
+---------------------------------------------------------------------------------------
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
