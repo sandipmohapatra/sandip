@@ -119,19 +119,28 @@ Object life cycle:-
 3)detached:- if the object will stored in the database but not associated with any session.
 ---------------------------------------------------------------------------------------------
 1)HQL (Hibernate Query Language)
-select * from emp;(sql)/from emp (hql)
+select * from emp;(sql)
+1)from emp (hql)
+2)"update student set name=:n where id=:i"
+setParameter("n","Meera");
+setParameter("i",101);
+3)"select max(salary) from emp";
+4)"select min(salary) from emp";
+----------------------------------------------------------------
 2)Criteria
 eq() :- equal
 ne():- not equal
 ge() :- greater than equal 
+
+------------------------------------------------------------------------------
 3)projection :- aggregate function(avg,min,max)
 ------------------------------------------------------------
 relationship:-
 -----------------------
-1)one to one
-2)one to many
-3)many to one
-4)many to many
+1)one to one(one student and teacher)
+2)one to many(one teacher having many student)
+3)many to one(many student having one teacher)
+4)many to many(many student having many teachers)
 -----------------------------------------------------
 cache and Lazy and eager Loading
 -----------------------------------------------------
@@ -240,6 +249,134 @@ joining 2 tables:-
 ---------------------------
 select a.studid,a.name,a.address,a.salary,b.phy,b.chem,b.maths,b.tot,b.avg from student a,marks b where a.studid=b.studid;
 ---------------------------------
+
+
+
+Hibernate prg-2 (criteria)
+----------------------------
+product.java
+--------------------------------------------
+class product
+{
+int productid;
+String proName;
+double price;
+getter();
+setter();
+------------------------------------------------
+main.java
+-------------------------
+import java.util.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+class main
+{
+psvm(String arg[])
+{
+Configuration cfg=new Configuration();
+cfg.configure();
+SessionFactory sf=cfg.buildSessionfactory();
+Session ss=sf.openSession();
+Criteria crit=ss.createCriteria(product.class);
+Criterion cn=Restrictions.gt("price",new Double(15000.00));
+//in the product table we have some products we want to see all the products which are above 15k.....
+crit.add(cn);
+
+List li=crit.list();//this list() is in the criteria 
+s.o.p("the total no of elements are "+li.size());
+
+Iterator it=li.iterator();
+while(it.hasNext())
+{
+Product p=(Product)it.next();
+s.o.p(p.getProductId());
+s.o.p(p.getProName());
+s.o.p(p.getPrice());
+}
+
+ss.close();
+sf.close();
+}}
+-----------------------------------------------------------------------------
+load example:-
+-----------------------
+import java.util.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+public class Logic 
+{
+	public static void main(String[] args)
+	{
+		Configuration cfg=new Configuration();
+		cfg.configure();
+		SessionFactory sf=cfg.buildSessionFactory();
+		Session ss=sf.openSession();
+		Object ob=ss.load(Product.class,new Integer(101));
+		Product pd=(Product) ob;
+		System.out.println("the product id is "+pd.getProductid());
+		System.out.println("the product name "+pd.getProName());
+		System.out.println("the product price is "+pd.getPrice());
+		ss.close();
+		sf.close();
+		}}
+-------------------------------------------------------------------------------------------
+	
+import java.util.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+public class Logic 
+{
+	public static void main(String[] args)
+	{
+		Configuration cfg=new Configuration();
+		cfg.configure();
+		SessionFactory sf=cfg.buildSessionFactory();
+		Session ss=sf.openSession();
+		Scanner sc=new Scanner(System.in);
+		System.out.println("enter the productid you want to see details");
+		int x=sc.nextInt();
+		Query qry=ss.createQuery("from Product p where p.productid=:xyz" );
+		qry.setParameter("xyz",x);
+		
+		List li=qry.list();
+		System.out.println("total no of records "+li.size());
+		Iterator it=li.iterator();
+		while(it.hasNext())
+		{
+			Object ob=it.next();
+			Product pd=(Product) ob;
+		System.out.println("the product id is "+pd.getProductid());
+		System.out.println("the product name "+pd.getProName());
+		System.out.println("the product price is "+pd.getPrice());
+		}
+		ss.close();
+		sf.close();
+		}}	
+	
+
+---------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
