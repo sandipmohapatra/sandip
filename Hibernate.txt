@@ -24,11 +24,13 @@ sqlserver data type used are int and varchar(30)
 --------------------------------------------------------------------------------------------
 generator classes:-
 ------------------------------
-1)sequence :-The database sequence is automatically generated.
+1)sequence :-The database sequence is automatically generated.(create sequence)
 
 2)assigned:- It will get the value from the application.
 
-3)increment :- it will increment same as your sequence.
+3)increment :- it will increment same as your sequence.(oracle)
+
+4)native :- Ramdom generation of number.
 ----------------------------------------------------------------------------------------
 Session :-
 ----------------------
@@ -361,6 +363,440 @@ public class Logic
 	
 
 ---------------------------------------------------------------------------------------
+Two tables:-
+----------------------------
+1)items.java :-itemId,itemName,itemPrice,getter(),setter();
+
+2)product.java:-productId,proName,price,getter(),setter();
+--------------------------
+hibernate.cfg.xml
+----------------------------
+items.hbm.xml
+--------------------------------------
+product.hbm.xml
+--------------------------------
+logic.java
+------------------------
+import java.util.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+public class Logic 
+{
+	public static void main(String[] args)
+	{
+		Configuration cfg=new Configuration();
+		cfg.configure();
+		SessionFactory sf=cfg.buildSessionFactory();
+		Session ss=sf.openSession();
+Query qry=ss.createQuery("insert into Product(productId,proName,price) select i.itemId,i.itemName,i.itemPrice from Items i where i.itemId=?");
+	qry.setParameter(0,101);
+	int res=qry.executeUpdate();
+s.o.p("number of rows updated"+res);
+ss.close();
+sf.close();
+}
+}
+---------------------------------------------------------
+	
+Query qry=ss.createQuery("delete from Product p where p.productId=?");
+	qry.setParameter(0,101);
+	int res=qry.executeUpdate();
+s.o.p("number of rows updated"+res);
+------------------------------------------------------------------------------------------------------------
+Relationship 4 types (one-one),(one-many),(many-one),(many-many)
+----------------------------------------------------------------------------------------------------------
+One-one Relation ship :- the employee class has the address reference and the address class has the employee reference.
+------------------------------------
+Example:- 
+employee.java
+--------------------------
+class Employee 
+{
+private String empid,name,email;
+private Address address;
+getter(),setter();
+}
+----------------------------------
+Address.java
+-------------------------
+class Address
+{
+private String addressid,line,city,state,country;
+private Employee employee;
+getter(),setter();
+}
+----------------------------------------------------------
+employee.hbm.xml
+---------------------------------
+<class name="Employee" table="emp1">
+<id name="empid">
+<generator class="assigned"></generator>
+</id>
+<property>name</property>
+<property>email</property>
+<one-to-one name="address"></one-to-one>
+</class>
+--------------------------------------------------------------
+address.hbm.xml
+---------------------------------
+<class name="Address" table="address1">
+<id name="addressid">
+<generator class="assigned"></generator>
+</id>
+<property>line</property>
+<property>city</property>
+<property>state</property>
+<property>country</property>
+</class>
+------------------------------------------------------------
+main.java
+---------------------
+class main
+{
+PSVM(String args[])
+{
+Configuration cfg=new Configuration();
+cfg.configure();
+SessionFactory sf=cfg.buildSessionFactory();
+Session ss=sf.openSession();
+Transaction ts=ss.beginTransaction();
+
+Employee e1=new Employee();
+e1.setEmpId(101);
+e1.setName("Meka");
+e1.setEmail("meka@gmail.com");
+
+Address a1=new Address();
+a1.setAddressid(101);
+a1.setLine("AB-101");
+a1.setCity("Bangalore");
+a1.setState("Karnataka");
+a1.setCountry("India");
+
+e1.setAddress(a1);
+a1.setEmployee(e1);
+
+ss.save(e1);
+tx.commit();
+ss.close();
+}
+}
+--------------------------------------------------------------------------
+one-to-Many
+---------------------
+example:-
+----------------
+Question.class
+------------------------
+class Question
+{
+int id;
+String name;
+Set<Answer> answers;
+getter(),setter();
+-------------------------------------------------
+Answer.class
+---------------------------
+class Answer
+{
+int id;
+String ans,postedby;
+getter(),setter();
+--------------------------------------------
+question.hbm.xml
+--------------------------
+<class name="Question" table="question">
+ <id name="id">
+<generator class="assigned">/generator>
+</id>
+<property name="name"></property>
+<set name="answers">
+<key column="qid"></key>
+<one-to-many class="Answer">
+</set>
+
+</class>
+<class name="Answer" table="answer">
+<id name="id">
+<generator class="assigned">/generator>
+</id>
+<property name="ans"></property>
+<property name="postedby"></property>
+</class>
+--------------------------------------------------------------
+main.class
+---------------------
+class main
+{
+PSVM(String args[])
+{
+Configuration cfg=new Configuration();
+cfg.configure();
+SessionFactory sf=cfg.buildSessionFactory();
+Session ss=sf.openSession();
+Transaction ts=ss.beginTransaction();
+
+Answer a1=new Answer();
+a1.setAns("java is platform");
+a1.setPostedby("Tarun");
+
+Answer a2=new Answer();
+a2.setAns("java is langauage");
+a2.setPostedby("Meka");
+
+ArrayList<Answer> list1=new ArrayList<Answer>();
+list1.add(a1);
+list1.add(a2);
+
+
+Question q1=new Question();
+q1.setName("what is java");
+q1.setAnswer(list1);
+
+ss.save(q1);
+ts.commit();
+ss.close();
+}}
+--------------------------------------------------------------
+Many-to-Many
+---------------------------
+Course.class
+------------------------
+class Course
+{
+int cid;
+String cname;
+getter();
+setter();
+}
+---------------------------------------
+Student.class
+-----------------------
+class Student
+{
+int sid;
+String sname;
+Set<Course> crs=new HashSet<Course>();
+Student(); <- default const
+Student(sname,Set<Course> course)
+getter(),setter();
+-------------------------------------------
+course.hbm.xml
+---------------------
+<class name="Course" table="course">
+<id name=cid>
+<generator class="assigned"></generator></id>
+<property name="cname"></property>
+</class>
+----------------------------------------
+student.hbm.xml
+---------------------------
+<class name="Student" table="student">
+<id name=sid>
+<generator class="assigned"></generator></id>
+<property name="cname"></property>
+
+<set name="course" table="studentcourse">
+<key column="stid"/>
+<many-to-many column="cousid" class="Course"/>
+</set>
+</class>
+------------------------------------------------------------------
+main.java
+-----------------------
+class main
+{
+PSVM(String args[])
+{
+Configuration cfg=new Configuration();
+cfg.configure();
+SessionFactory sf=cfg.buildSessionFactory();
+Session ss=sf.openSession();
+Transaction ts=ss.beginTransaction();
+Set<Course> crs=new HashSet<Course>();
+crs.add("Maths");
+crs.add("Computer");
+
+Student stud1=new Student("Meka",crs);
+Student stud2=new Student("Tarun",crs);
+ss.save(stud1);
+ss.save(stud2);
+ts.commit();
+ss.close();
+}
+}
+------------------------------------------------------
+cascade=all :- if you want to do insert or update or delete operation on the parent class the child class object also will be inserted or updated or deleted.
+------------------------------------------------------------
+employee :- empid primary key,name (cannot delete empid which is reffered in the salary table)
+salary:- empid references employee,salary   (empid is orphan)
+----------------------------------------------------
+
+Spring and Hibernate configuration :(4.x) version
+------------------------------------------------------------------------
+main.class
+--------------------
+class main
+{
+public static void main(String args[])
+{
+ApplicationContext context = new ClassPathXmlApplicationContext("conf/OrmConf.xml");
+
+Item item1 = (Item) context.getBean("item");
+Item item2 = (Item) context.getBean("item");
+Item item3 = (Item) context.getBean("item");
+
+item1.setiCode(501);
+item1.setiName("Laptop i3");
+item1.setiPrice("20000");
+
+
+item2.setiCode(502);
+item2.setiName("Laptop i5");
+item2.setiPrice("30000");
+
+item3.setiCode(503);
+item3.setiName("Laptop i7");
+item3.setiPrice("50000");
+
+ItemDAO itemDAO = (ItemDAO) context.getBean("itemDAO");
+itemDAO.addItem(item1);
+itemDAO.addItem(item2);
+itemDAO.addItem(item3);
+
+List <Item> items=itemDAO.getItems();
+
+for(Item item : items)
+s.o.p(item);
+}}
+----------------------------------------
+ItemDAO.class
+------------------------
+@Repository("itemDAO")
+class ItemDAO extends HibernateDaoSupport
+{
+ItemDAO()
+{}
+@Autowired
+@Qualifier("sessionFactory")
+@Required
+public void setMySessionFactory(SessionFactory sessionFactory)
+{
+this.setSessionFactory(sessionFactory);
+}
+
+@Transactional
+public void addItem(Item item)
+{
+this.getHibernateTemplate().save(item);
+}
+
+@Transactional
+public void removeItem(Item item)
+{
+this.getHibernateTemplate().delete(item);
+}
+
+@Transactional
+public void updateItem(Item item)
+{
+this.getHibernateTemplate().update(item);
+}
+
+public Item getItem(int iCode)
+{
+return this.getHibernateTemplate().get(item.class,icode); 
+}
+
+
+public List<item> getItems()
+{
+return this.getHibernateTemplate().loadAll(Item.class);
+}
+}
+------------------------------------------------------------------
+Item.java
+---------------------
+
+@SuppressWarnings("serial")
+@Component("item")
+@Scope("prototype")
+@Entity
+@Table(name="spItem")
+class Item implements Serializable
+{
+@Id
+int iCode;
+String iName;
+double iPrice;
+
+public Item()
+{}
+item(int iCode,String iName,double iPrice)
+{
+this.iCode=iCode;
+this.iName=iName;
+this.iPrice=iPrice;
+}
+getter();
+setter();
+@Override
+public String toString()
+{
+return "Item : [iCode=" + iCode +",iName=" +iName+",iPrice= "+iPrice ]";
+}
+------------------------------------------------
+
+conf/OrmConf.xml :-
+----------------------------------
+<beans>
+<bean id="myDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<property name="driverClassName">
+<property name="URL">
+<property name="UserName">
+<property name="Password">
+</bean>
+
+<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+<property name="dataSource" ref="myDataSource">
+<list>
+<value>Item</value>
+</list>
+
+<props>
+<prop key="hibernate.hbm2ddl.auto>update</prop>
+<prop key="hibernate.dialect">MySqlDialect</prop>
+<prop key="hibernate.show_sql">true</prop>
+</props>
+</bean>
+
+<bean id="txManager" class="org.springframework.jdbc.dataSource.DataSourceTransactionManager">
+</beans>
+-----------------------------------------------------------------------
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
