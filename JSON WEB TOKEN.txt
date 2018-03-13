@@ -1,0 +1,96 @@
+JWT (JSON WEB TOKEN)
+---------------------------------------------
+1) JWT is a open standard for passing claims or security information between server and client.to check that the client is a authenticate user.
+example:- connecting git to gitHub.
+
+2) when we are passing data from server to client or client to server we have to pass data in secured way.
+so whenever client and server data is processed the client become the consumer and the server always use the JWT to send information in secured maner.
+
+3)when the client and server has to communicate between each other for a period it neednot to authenticate every time.It will check the authentication for the first time and next time onwards server will check the client authentication internally.
+
+4)JWT use to pass the key to server in the form of URL and store the details of the client and server agreement in the cookies.
+
+5)The JWT structure is divided into 3 parts.
+i)header
+ii)payload
+iii)signature.
+
+6)header :- it usually contain 2 parts .
+i)typ :- it should be JWT
+ii)alg :-hashing algorithm(HS2567,RS512,ES384)
+
+example :-
+{
+"typ" :"JWT",
+"alg":"HS256"
+}
+* Here we have to define the algorithm where the token need to be Hashed.
+-------------------------------------------------------------------------------------------------
+7)Payload:- It conatins the information related to token which need to be transmit.
+it will be in the form of key and value pair. according to this section details the server will get connected and made available to the client.It is called as cliam.
+
+example:-
+{
+"iss":"microsoft.com",
+"name":"sandip",
+"admin":false
+}
+
+iss -issuer
+sub - subject
+aud- audience
+exp- expiration time
+nbf - not before
+iat - issued at
+jti - JWT id
+
+* After it is encoded no one can temper even everyone can see.if any one temper the token will be invalid.
+------------------------------------------------------------------
+signature :-
+It contain both header and payload encoded value.
+
+example :- var s=base64Encode(header)+base64Encode(payload);
+
+var signature = hashAlgoHS256(s,'secret key');
+
+JWT =header+payload+signature.
+------------------------------------------------------------------------------------
+ The work flow of JWT
+--------------------------------------
+client :- It will request token by providing authorization credential.
+
+server:- check credentials and create JWT.if credential is not correct it will throw an error.
+
+server:- sends the token to the client machine .this will reside in the client machine so that next onwards the server will check this token and allow to connect.(use same persisted token for subsequent calls to server)
+server verify the client token for all subsequent calls to server.
+
+-------------------------------------------------------------------------
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
