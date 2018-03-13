@@ -40,7 +40,7 @@ Session :-
 
 3)session.delete():- It is used to delete an existing reord.
 
-4)session.load():- It is used to retrieve  data in object fromat from the database.
+4)session.load():- It is used to retrieve  data in object format from the database.
 
 5)session.saveOnUpdate():- It will save the record if not there or update the record in the database.
 
@@ -775,7 +775,210 @@ conf/OrmConf.xml :-
 <bean id="txManager" class="org.springframework.jdbc.dataSource.DataSourceTransactionManager">
 </beans>
 -----------------------------------------------------------------------
+ Hibernate Annotation
+------------------------------------
+1)@Id :-this is the primary key field.
+2)@GeneratedValue :- Hibernate will descide which generated class to be used to make the code portable between different databases.
+3)@Column :- this is used to specify the details of the columns to which a field or property will be mapped.
+4)@Table :- it allows you to specify the details of the table where to persist the data 
+5)@Autowired:- setter byType,properties,constructor. 
+   
+---------------------------------------------------------------------------------------------
+singleton :- where single object is created.(default)
+prototype :- where multiple object is created. 
+-------------------------------------------------------------------------------------------
+@Component:-This annotation tells the spring container to pick the bean defined in the DAO class.
+example:- @Component("DAO")
+@Repository :- it will import the PersonDAO interface into the implemented class and also handles the exceptions.
+-----------------
+@Transactional :- spring will create proxies for classes that declare @Transactional 
+which will implement the same interface which the class will implement. so when the client calls the object the call will intercept and the data is injected via proxy mechanism. 
+-------------------------------------------------------------------------------------
+Spring MVC with Hibernate and Mysql and annotation (4.x)
+------------------------------------------------------------------------------
+create table Person(personid,name,country) 
+----------------------------------------------------------------------------------------------
+we will create a person.jsp to add person
+we display report and have option to edit person or delete person.
+----------------------------------------------------------------------------------------------
+Hibernate Entity Bean
+-----------------------------------
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GeneratedType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+@Entity
+@Table(name="Person");
+public class Person
+{
+@Id
+@Column(name="id")
+@GeneratedValue(strategy=GenerationType.IDENTITY)
+private int id;
+private String name;
+private String country;
+getter(),setter();
+@Override
+public String toString()
+{
+return "id="+id+,"name="+name+",country="+country;
+}
+}
+-----------------------------------------------------------------------
+PersonDAO.java(interface)
+-----------------------------------------------
+public interface PersonDAO
+{
+public void addPerson(Person p);
+public void updatePerson(Person p);
+public List<Person> listPerson();
+public Person getPersonById(int id);
+public void removePerson(int id);
+}
+---------------------------------------------------------
+DAOimplementation.java
+---------------------------------------------------
+import org.hibernate.session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.springframework.stereotype.Repository;
+@Repository("PersonDAO");
+public class PersonDAOImpl implements PersonDAO
+{
+private SessionFactory sessionfactory;
+
+private void setSessionFactory(SessionFactory sf)
+{
+this.sessionFactory =sf;
+}
+
+@Override
+public void addPerson(Person p)
+{
+Session session=this.sessionFactory.getCurrentSession();
+session.save(p);
+logger.info("person saved successfully");
+}
+
+@Override
+public void updatePerson(Person p)
+{
+Session session=this.sessionFactory.getCurrentSession();
+session.update(p);
+logger.info("person updated successfully");
+}
  
+@Override
+public List<Person> listPerson()
+{
+Session session=this.sessionFactory.getCurrentSession();
+List<Person> personList =session.createQuery("from Person").list();
+for(Person p : personList)
+{
+logger.info("person List::"+p);
+}
+
+return personList;
+}
+
+@Override
+public Person getPersonById(int id)
+{
+Session session=this.sessionFactory.getCurrentSession();
+Person p=(Person) session.load(Person.class,new Integer(id));
+logger.info("person data loaded"+p);
+return p;
+}
+
+@Override
+public void removePerson(int id)
+{
+Session session=this.sessionFactory.getCurrentSession();
+Person p=(Person) session.load(Person.class,new Integer(id));
+if(null != p)
+session.delete(p);
+}
+logger.info("person data deleted"+p);
+}
+}
+-----------------------------------------------------------------------------
+SpringService Classes
+------------------------------------
+(Model)
+public interface PersonService
+{
+public void addPerson(Person p);
+public void updatePerson(Person p);
+public List<Person> listPerson();
+public Person getPersonById(int id);
+public void removePerson(int id);
+}
+-------------------------------------------------------
+SpringServiceImpl Classes
+----------------------------------------------
+@Service
+public class PersonServiceImpl implements PersonService
+{
+private PersonDAO personDAO;
+{
+this.personDAO=personDAO;
+}
+
+@Override
+@Transactional
+public void addPerson(Person p)
+{
+this.personDAO.addperson(p);
+}
+
+@Override
+@Transactional
+public void updatePerson(Person p)
+{
+this.personDAO.updatePerson(p);
+}
+
+@Override
+@Transactional
+public List<Person> listPerson()
+{
+return this.personDAO.listPerson();
+}
+
+@Override
+@Transactional
+public Person getPersonById(int id)
+{
+return this.personDAO.getPersonById(id);
+}
+
+@Override
+@Transactional
+public void removePerson(int id)
+{
+this.personDAO.removePerson(id);
+}
+
+}
+-----------------------------------------------------------
+controller class
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
