@@ -1,0 +1,138 @@
+Jasmine
+-----------
+1)This is used for testing your javascript,angular.js and Node.js
+
+2)It is a open-source javascript framework capable of testing javascript application.
+
+3)it follows Behaviour Driven development(BDD) procedure to ensure that each line of javascript statement is properly unit tested.
+
+4)it provides small syntax to test the smallest unit .The test will be done unit by unit not as a whole.
+
+to work with jasmine we have to download some library file :- http://jasmine.github.io/
+
+https://github.com/jasmine/jasmine
+
+---------------------------------------------
+javascript function
+--------helloworld.js-------------------------
+var helloworld=function()
+{
+return 'hello world';
+};
+---------Helloworldtest.js---------------------------------------------
+describe("Hello World",function()
+{
+it("should Return Hello World",function()
+{
+expect(helloworld()).toEqual('Hello World');
+});
+});
+-------------------outut.html------------------------------------------------
+<!DOCTYPE html>
+<html>
+<head>
+<title>This is Jasmine Test Runner</title>
+<script src="lib/jasmine-2.4.1/jasmin.js">
+<script src="lib/jasmine-2.4.1/jasmin.html">
+<script src="src/hellworld.js">
+<script src="spec/Helloworldtest.js">
+</head>
+</body>
+</html>
+------------------------------------------------------------------------------
+passed :- green
+failed :- red
+------------------------------------------------------------------------------
+methods :-
+----------------------------------------
+expected value,value
+
+expect(calc.sum(3,5)).toEqual(9);
+result :- expected 8 value 9 
+
+
+1)toBe() :- passed if the actual value is of the same type as that of the expected value.
+it compares with = = = operator.
+
+2)toEqual() :- works for variables and object also. to compare the value.
+
+3)toMatch():- to check that a value matches a string.
+
+4)toBeDefined():- to ensure that a property or value is defined.
+
+5)toBeUndefined():- to ensure that a property or value is undefined.
+
+6)toBeNull():- to ensure that a property or value is null.
+
+7)toBeTruthy():- to ensure that a property or value is true.
+
+8)toBeFalsy():- to ensure that a property or value is false.
+
+9)toContain():- to check wheather a string or array contain a substring or an item.
+
+10)toBeLessThan() :- for mathematical comparisons of less than.
+
+11)toBeGreaterThan():- for mathematical comparisons of greater than.
+
+12)toBeCloseTo():- for mathematical comparisons to get the result aprox/close to.
+
+13)toThrow() :- to test if a function throws an exception.
+
+14)toThrowError() :- to test a specific throw exception.
+
+-----------------------------------------------
+spyOn() :- it is used to spy on the function calls.
+with how many parameters is used in the function and how many parameters we are calling with.
+It return true if the function is called.
+we have 2 methods :-1) toHaveBeenCalled();
+2) toHaveBeenCalledWith(4,5); //this is with parameter .it should match with //* calc.sum(4,5)
+--------------------------------------
+jasmine with Javascript
+--------------------------------------
+jasmine with Angularjs
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
